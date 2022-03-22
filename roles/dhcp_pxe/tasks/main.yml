@@ -7,7 +7,7 @@
       guest_id: "rhel7_64Guest"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: "{{ vcenter.vm_power_state }}"
       disk:
       - size_gb: 120
@@ -31,7 +31,7 @@
       guest_id: "rhel7_64Guest"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: "{{ vcenter.vm_power_state }}"
       disk:
       - size_gb: 120
@@ -56,7 +56,7 @@
       guest_id: "rhel7_64Guest"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: "{{ vcenter.vm_power_state }}"
       disk:
       - size_gb: 120
@@ -73,5 +73,5 @@
     loop: "{{ worker_vms }}"
 
   - name: Update VM options on the template
-    command: "govc vm.change -vm {{ vcenter.folder_absolute_path }}/{{ item.name }} -e=disk.EnableUUID=TRUE" # noqa 301
+    command: "govc vm.change -vm {{ vcenter.folder_absolute_path }}/{{ cluster_infraID }}-{{ item.name }} -e=disk.EnableUUID=TRUE" # noqa 301
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"

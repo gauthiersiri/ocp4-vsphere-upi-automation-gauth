@@ -57,7 +57,7 @@
       datacenter: "{{ vcenter.datacenter }}"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: "{{ vcenter.vm_power_state }}"
       template: "{{ vcenter.template_name }}"
       disk:
@@ -85,7 +85,7 @@
       datacenter: "{{ vcenter.datacenter }}"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: "{{ vcenter.vm_power_state }}"
       template: "{{ vcenter.template_name }}"
       disk:
@@ -113,7 +113,7 @@
       datacenter: "{{ vcenter.datacenter }}"
       validate_certs: no
       folder: "{{ vcenter.folder_absolute_path }}"
-      name: "{{ item.name }}"
+      name: "{{ cluster_infraID }}-{{ item.name }}"
       state: poweredoff
       template: "{{ vcenter.template_name }}"
       disk:

@@ -75,34 +75,34 @@
 
   - name: Generate kernel params for bootstrap
     vars:
-      machine_name: "{{ item.name }}"
+      machine_name: "{{ cluster_infraID }}-{{ item.name }}"
       machine_type: bootstrap
       machine_ip: "{{ item.ipaddr }}"
     template:
       src: "{{ kernel_param_template }}"
-      dest: "{{ role_path }}/files/{{ item.name }}-kernel-params.txt"
+      dest: "{{ role_path }}/files/{{ cluster_infraID }}-{{ item.name }}-kernel-params.txt"
       mode: '0664'
     loop: "{{ bootstrap_vms }}"
 
   - name: Generate kernel params for all masters
     vars:
-      machine_name: "{{ item.name }}"
+      machine_name: "{{ cluster_infraID }}-{{ item.name }}"
       machine_type: master
       machine_ip: "{{ item.ipaddr }}"
     template:
       src: "{{ kernel_param_template }}"
-      dest: "{{ role_path }}/files/{{ item.name }}-kernel-params.txt"
+      dest: "{{ role_path }}/files/{{ cluster_infraID }}-{{ item.name }}-kernel-params.txt"
       mode: '0664'
     loop: "{{ master_vms }}"
 
   - name: Generate kernel params for all workers
     vars:
-      machine_name: "{{ item.name }}"
+      machine_name: "{{ cluster_infraID }}-{{ item.name }}"
       machine_type: worker
       machine_ip: "{{ item.ipaddr }}"
     template:
       src: "{{ kernel_param_template }}"
-      dest: "{{ role_path }}/files/{{ item.name }}-kernel-params.txt"
+      dest: "{{ role_path }}/files/{{ cluster_infraID }}-{{ item.name }}-kernel-params.txt"
       mode: '0664'
     loop: "{{ worker_vms }}"
 
@@ -117,17 +117,17 @@
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"
 
   - name: Upload all the custom generated ISOs to the datastore
-    command: "govc datastore.upload -ds {{ vcenter.datastore }} {{ iso_dir }}/{{ item.name }}.iso {{ item.name }}.iso" # noqa 301
+    command: "govc datastore.upload -ds {{ vcenter.datastore }} {{ iso_dir }}/{{ cluster_infraID }}-{{ item.name }}.iso {{ cluster_infraID }}-{{ item.name }}.iso" # noqa 301
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"
 
   - name: Add a cdrom device to all the OpenShift VMs
-    command: "govc device.cdrom.add -vm {{ item.name }}" # noqa 301
+    command: "govc device.cdrom.add -vm {{ cluster_infraID }}-{{ item.name }}" # noqa 301
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"
 
   - name: Insert the uploaded ISO file {{ item.name }}.iso as cdrom to VM {{ item.name }}
-    command: "govc device.cdrom.insert -vm {{ item.name }} -ds {{ vcenter.datastore }} ./{{ item.name }}.iso" # noqa 301
+    command: "govc device.cdrom.insert -vm {{ cluster_infraID }}-{{ item.name }} -ds {{ vcenter.datastore }} ./{{ cluster_infraID }}-{{ item.name }}.iso" # noqa 301
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"
 
   - name: Power-On all the VMs
-    command: "govc vm.power -on {{ item.name }}" # noqa 301
+    command: "govc vm.power -on {{ cluster_infraID }}-{{ item.name }}" # noqa 301
     loop: "{{ bootstrap_vms + master_vms + worker_vms }}"
