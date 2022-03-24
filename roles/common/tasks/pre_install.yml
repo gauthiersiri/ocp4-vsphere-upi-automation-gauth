@@ -66,6 +66,7 @@
 - name: Install pyvmomi
   pip:
     name: pyvmomi
+  become: true
 
 - name: Clean up existing bin, install-dir and downloads folders
   file:
