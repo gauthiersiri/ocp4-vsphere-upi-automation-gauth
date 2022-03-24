@@ -34,7 +34,6 @@
     - name: Get Cluster infraID
       command: jq -r .infraID "{{ playbook_dir }}/install-dir/metadata.json"
       register: infraID
-      when: vcenter.folder_absolute_path is defined and vcenter.folder_absolute_path | type_debug == "NoneType"
 
     - name: Set the cluster_infraID fact
       set_fact:
