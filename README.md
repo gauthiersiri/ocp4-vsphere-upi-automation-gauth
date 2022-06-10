@@ -36,7 +36,8 @@ This is a concise summary of everything you need to do to use the repo. Rest of 
 2. A datacenter created with a vSphere host added to it, a datastore exists and has adequate capacity
 3. The playbook(s) assumes you are running a [helper node](https://github.com/RedHatOfficial/ocp4-helpernode) in the same network to provide all the necessary services such as [DHCP/DNS/HAProxy as LB]. Also, the MAC addresses for the machines should match between helper repo and this. If not using the helper node, the minimum expectation is that the webserver and tftp server (for PXE boot) are running on the same external host, which we will then treat as a helper node.
 4. The necessary services such as [DNS/LB(Load Balancer] must be up and running before this repo can be used
-5. Ansible (preferably latest) on the machine where this repo is cloned.
+5. Ansible on the machine where this repo is cloned.
+   * This repository has been tested with Ansible 2.9.x.  Issues were encountered when running with a version > 2.9.
    * Before you install Ansible, install the `epel-release`, run `yum -y install epel-release`
 
 > For vSphere 6.5, the files relating to interaction with VMware/vCenter such as [this](roles/dhcp_ova/tasks/main.yml) ***may*** need to have `vmware_deploy_ovf` module to include [`cluster`](https://docs.ansible.com/ansible/latest/modules/vmware_deploy_ovf_module.html#parameter-cluster), [`resource-pool`](https://docs.ansible.com/ansible/latest/modules/vmware_deploy_ovf_module.html#parameter-resource_pool) parameters and their values set to work correctly.
