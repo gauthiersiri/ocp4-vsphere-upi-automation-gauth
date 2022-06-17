@@ -14,7 +14,7 @@ As it stands right now, the repo works for several installation use cases:
 
 ## Quickstart
 This is a concise summary of everything you need to do to use the repo. Rest of the document goes into details of every step.
-1. Setup [helper node](https://github.com/RedHatOfficial/ocp4-helpernode)
+1. Setup [helper node](https://github.com/RedHatOfficial/ocp4-helpernode) or ensure appropriate services (DNS/DHCP/LB/etc.) are available and properly referenced.
 2. Edit `group_vars/all.yml`, the following must be changed while the rest can remain the same
    * pull secret
    * ip and mac addresses, host/domain names
@@ -36,7 +36,8 @@ This is a concise summary of everything you need to do to use the repo. Rest of 
 2. A datacenter created with a vSphere host added to it, a datastore exists and has adequate capacity
 3. The playbook(s) assumes you are running a [helper node](https://github.com/RedHatOfficial/ocp4-helpernode) in the same network to provide all the necessary services such as [DHCP/DNS/HAProxy as LB]. Also, the MAC addresses for the machines should match between helper repo and this. If not using the helper node, the minimum expectation is that the webserver and tftp server (for PXE boot) are running on the same external host, which we will then treat as a helper node.
 4. The necessary services such as [DNS/LB(Load Balancer] must be up and running before this repo can be used
-5. Ansible (preferably latest) on the machine where this repo is cloned.
+5. Ansible on the machine where this repo is cloned.
+   * This repository has been tested with Ansible 2.9.x.  Issues were encountered when running with a version > 2.9.
    * Before you install Ansible, install the `epel-release`, run `yum -y install epel-release`
 
 > For vSphere 6.5, the files relating to interaction with VMware/vCenter such as [this](roles/dhcp_ova/tasks/main.yml) ***may*** need to have `vmware_deploy_ovf` module to include [`cluster`](https://docs.ansible.com/ansible/latest/modules/vmware_deploy_ovf_module.html#parameter-cluster), [`resource-pool`](https://docs.ansible.com/ansible/latest/modules/vmware_deploy_ovf_module.html#parameter-resource_pool) parameters and their values set to work correctly.
@@ -55,6 +56,7 @@ This is a concise summary of everything you need to do to use the repo. Rest of 
    6. Datacenter name *(created in the prerequisites mentioned above)*
    7. Datastore name
    8. Absolute path of the vCenter folder to use *(optional)*. If this field is not populated, its is auto-populated and points to `/${vcenter.datacenter}/vm/${config.cluster_name}`
+   9. Specify hardware version for VM compatibility.  Defaults to 15.
 3. Downloadable link to `govc` (vSphere CLI, *pre-populated*)
 4. OpenShift cluster
    1. base domain *(pre-populated with **example.com**)*
@@ -203,7 +205,7 @@ ansible-playbook -i staging restricted_static_ips_ova.yml
    ```
 ### Expected Outcome
 
-1. Necessary Linux packages installed for the installation
+1. Necessary Linux packages installed for the installation. NOTE: support for Mac client to run this automation has been added but is not guaranteed to be complete
 2. SSH key-pair generated, with key `~/.ssh/ocp4` and public key `~/.ssh/ocp4.pub`
 3. Necessary folders [bin, downloads, downloads/ISOs, install-dir] created
 4. OpenShift client, install and .ova binaries downloaded to the **downloads** folder
