@@ -78,7 +78,7 @@
         - key: guestinfo.ignition.config.data.encoding
           value: base64
         - key: guestinfo.afterburn.initrd.network-kargs
-          value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}:{{ item.name }}:ens192:off:{{ static_ip.dns }}"
+          value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}::ens192:off:{{ static_ip.dns }}"
     loop: "{{ bootstrap_vms }}"
 
   - name: Create master VMs from ther template
@@ -113,7 +113,7 @@
        - key: guestinfo.ignition.config.data.encoding
          value: base64
        - key: guestinfo.afterburn.initrd.network-kargs
-         value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}:{{ item.name }}:ens192:off:{{ static_ip.dns }}"
+         value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}::ens192:off:{{ static_ip.dns }}"
     loop: "{{ master_vms }}"
 
   - name: Create worker VMs from the template
@@ -148,5 +148,5 @@
        - key: guestinfo.ignition.config.data.encoding
          value: base64
        - key: guestinfo.afterburn.initrd.network-kargs
-         value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}:{{ item.name }}:ens192:off:{{ static_ip.dns }}"
+         value: "ip={{ item.ipaddr }}::{{ static_ip.gateway }}:{{ static_ip.netmask }}::ens192:off:{{ static_ip.dns }}"
     loop: "{{ worker_vms }}"
