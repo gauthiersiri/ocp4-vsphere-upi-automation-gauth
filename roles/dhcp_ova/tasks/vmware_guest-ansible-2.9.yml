@@ -1,0 +1,98 @@
+- name: Create bootstrap VM from the template
+  vmware_guest:
+    hostname: "{{ vcenter.ip }}"
+    username: "{{ vcenter.service_account_username }}"
+    password: "{{ vcenter.service_account_password }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    cluster: "{{ vcenter.cluster | default(omit) }}"
+    validate_certs: no
+    folder: "{{ vcenter.folder_absolute_path }}"
+    name: "{{ cluster_infraID }}-{{ item.name }}"
+    state: poweredon
+    template: "{{ vcenter.template_name }}"
+    disk:
+    - size_gb: "{{ item.disk_size_gb | default(120) }}"
+      type: thin
+      datastore: "{{ vcenter.datastore }}"
+    hardware:
+      memory_mb: "{{ item.ram }}"
+      num_cpus: "{{ item.cpu }}"
+      num_cpu_cores_per_socket: "{{ item.cores_per_socket | default(2) }}"
+      memory_reservation_lock: True
+      version: "{{ vcenter.hw_version }}"
+    networks:
+    - name: "{{ vcenter.network }}"
+      mac: "{{ item.macaddr | default(omit) }}"
+    wait_for_ip_address: no
+    customvalues:
+    - key: guestinfo.ignition.config.data
+      value: "{{ bootstrapContent }}"
+    - key: guestinfo.ignition.config.data.encoding
+      value: base64
+  loop: "{{ bootstrap_vms }}"
+
+- name: Create master VMs from ther template
+  vmware_guest:
+    hostname: "{{ vcenter.ip }}"
+    username: "{{ vcenter.service_account_username }}"
+    password: "{{ vcenter.service_account_password }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    cluster: "{{ vcenter.cluster | default(omit) }}"
+    validate_certs: no
+    folder: "{{ vcenter.folder_absolute_path }}"
+    name: "{{ cluster_infraID }}-{{ item.name }}"
+    state: poweredon
+    template: "{{ vcenter.template_name }}"
+    disk:
+    - size_gb: "{{ item.disk_size_gb | default(120) }}"
+      type: thin
+      datastore: "{{ vcenter.datastore }}"
+    hardware:
+      memory_mb: "{{ item.ram }}"
+      num_cpus: "{{ item.cpu }}"
+      num_cpu_cores_per_socket: "{{ item.cores_per_socket | default(2) }}"
+      memory_reservation_lock: True
+      version: "{{ vcenter.hw_version }}"
+    networks:
+    - name: "{{ vcenter.network }}"
+      mac: "{{ item.macaddr | default(omit) }}"
+    wait_for_ip_address: no
+    customvalues:
+    - key: guestinfo.ignition.config.data
+      value: "{{ masterContent }}"
+    - key: guestinfo.ignition.config.data.encoding
+      value: base64
+  loop: "{{ master_vms }}"
+
+- name: Create worker VMs from the template
+  vmware_guest:
+    hostname: "{{ vcenter.ip }}"
+    username: "{{ vcenter.service_account_username }}"
+    password: "{{ vcenter.service_account_password }}"
+    datacenter: "{{ vcenter.datacenter }}"
+    cluster: "{{ vcenter.cluster | default(omit) }}"      
+    validate_certs: no
+    folder: "{{ vcenter.folder_absolute_path }}"
+    name: "{{ cluster_infraID }}-{{ item.name }}"
+    state: poweredoff
+    template: "{{ vcenter.template_name }}"
+    disk:
+    - size_gb: "{{ item.disk_size_gb | default(120) }}"
+      type: thin
+      datastore: "{{ vcenter.datastore }}"
+    hardware:
+      memory_mb: "{{ item.ram }}"
+      num_cpus: "{{ item.cpu }}"
+      num_cpu_cores_per_socket: "{{ item.cores_per_socket | default(2) }}"
+      memory_reservation_lock: True
+      version: "{{ vcenter.hw_version }}"
+    networks:
+    - name: "{{ vcenter.network }}"
+      mac: "{{ item.macaddr | default(omit) }}"
+    wait_for_ip_address: no
+    customvalues:
+    - key: guestinfo.ignition.config.data
+      value: "{{ workerContent }}"
+    - key: guestinfo.ignition.config.data.encoding
+      value: base64
+  loop: "{{ worker_vms }}"
